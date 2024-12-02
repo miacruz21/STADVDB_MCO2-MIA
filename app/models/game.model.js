@@ -6,7 +6,10 @@ const sequelize = new Sequelize('MASTERNODE', 'user', 'password', {
     username:'user',
     password: 'password',
     database: 'MASTERNODE',
-    dialect: 'mysql'
+    dialect: 'mysql',
+    dialectOptions: {
+      connectTimeout: 30000
+    },
 });
 
 module.exports = (sequelize, Sequelize) => {
