@@ -4,7 +4,6 @@ module.exports = {
   PASSWORD: "password",
   DB: "MASTERNODE",
   dialect: "mysql",
-  PORT: 21922,
   pool: {
     max: 5, 
     min: 0,

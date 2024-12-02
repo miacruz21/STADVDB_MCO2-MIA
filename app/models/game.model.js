@@ -1,68 +1,54 @@
-const { Sequelize, DataTypes } = require('sequelize'); // Adjust the path as necessary
-
-// Initialize your Sequelize instance (make sure to configure it properly)
-const sequelize = new Sequelize('MASTERNODE', 'user', 'password', {
-    host: 'ccscloud.dlsu.edu.ph',
-    username:'user',
-    password: 'password',
-    database: 'MASTERNODE',
-    dialect: 'mysql',
-    dialectOptions: {
-      connectTimeout: 30000
-    },
-});
-
 module.exports = (sequelize, Sequelize) => {
-  const Game = sequelize.define("MASTERNODE", {
+  const Game = sequelize.define("dim_gameinfo", {
     AppID: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     Name: {
-      type: DataTypes.TEXT,
+      type: Sequelize.STRING,
     },
     Release_date: {
-      type: DataTypes.DATE,
+      type: Sequelize.DATE,
     },
     Required_age: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     Price: {
-      type: DataTypes.FLOAT,
+      type: Sequelize.FLOAT,
     },
     Estimated_owners_min: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     Estimated_owners_max: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     DLC_count: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     Achievements: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     About_the_game: {
-      type: DataTypes.TEXT,
+      type: Sequelize.STRING,
     },
     Notes: {
-      type: DataTypes.TEXT,
+      type: Sequelize.STRING,
     },
     Reviews: {
-      type: DataTypes.TEXT,
+      type: Sequelize.STRING,
     },
     Metacritic_score: {
-      type: DataTypes.STRING(100),
+      type: Sequelize.STRING(100),
     },
     Metacritic_url: {
-      type: DataTypes.STRING(1000),
+      type: Sequelize.STRING(1000),
     },
     Positive_reviews: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
     Negative_reviews: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
     },
   });
 
