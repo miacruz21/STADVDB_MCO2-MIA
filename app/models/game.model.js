@@ -20,99 +20,96 @@ const Game = function(game) {
   this.Negative_reviews = game.Negative_reviews;
 };
 
+// Create a new game
 Game.create = (newGame, result) => {
   sql.query("INSERT INTO dim_gameinfo SET ?", newGame, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.error("Error creating game: ", err);
       result(err, null);
       return;
     }
-
-    console.log("created Game: ", { AppID: res.insertId, ...newGame });
+    console.log("Created Game: ", { AppID: res.insertId, ...newGame });
     result(null, { AppID: res.insertId, ...newGame });
   });
 };
 
+// Retrieve all games
 Game.findAll = (result) => {
   sql.query("SELECT * FROM dim_gameinfo", (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.error("Error retrieving games: ", err);
       result(null, err);
       return;
     }
-
-    console.log("games: ", res);
+    console.log("Games: ", res);
     result(null, res);
   });
 };
 
+// Find a game by ID
 Game.findById = (AppID, result) => {
-  sql.query(`SELECT * FROM dim_gameinfo WHERE AppID = ?`, [AppID], (err, res) => {
+  sql.query("SELECT * FROM dim_gameinfo WHERE AppID = ?", [AppID], (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.error("Error finding game: ", err);
       result(err, null);
       return;
     }
-
     if (res.length) {
-      console.log("found game: ", res[0]);
+      console.log("Found game: ", res[0]);
       result(null, res[0]);
       return;
     }
-
     result({ kind: "not_found" }, null);
   });
 };
 
+// Update a game by ID
 Game.updateById = (AppID, game, result) => {
   sql.query(
     "UPDATE dim_gameinfo SET Name = ?, Release_date = ?, Required_age = ?, Price = ?, Estimated_owners_min = ?, Estimated_owners_max = ?, DLC_count = ?, Achievements = ?, About_the_game = ?, Notes = ?, Reviews = ?, Metacritic_score = ?, Metacritic_url = ?, Positive_reviews = ?, Negative_reviews = ? WHERE AppID = ?",
     [game.Name, game.Release_date, game.Required_age, game.Price, game.Estimated_owners_min, game.Estimated_owners_max, game.DLC_count, game.Achievements, game.About_the_game, game.Notes, game.Reviews, game.Metacritic_score, game.Metacritic_url, game.Positive_reviews, game.Negative_reviews, AppID],
     (err, res) => {
       if (err) {
-        console.log("error: ", err);
+        console.error("Error updating game: ", err);
         result(null, err);
         return;
       }
-
       if (res.affectedRows == 0) {
         result({ kind: "not_found" }, null);
         return;
       }
-
-      console.log("updated game: ", { AppID: AppID, ...game });
+      console.log("Updated game: ", { AppID: AppID, ...game });
       result(null, { AppID: AppID, ...game });
     }
   );
 };
 
+// Remove a game by ID
 Game.remove = (AppID, result) => {
   sql.query("DELETE FROM dim_gameinfo WHERE AppID = ?", AppID, (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.error("Error deleting game: ", err);
       result(null, err);
       return;
     }
-
     if (res.affectedRows == 0) {
       result({ kind: "not_found" }, null);
       return;
     }
-
-    console.log("deleted game with AppID: ", AppID);
+    console.log("Deleted game with AppID: ", AppID);
     result(null, res);
   });
 };
 
-Game.removeAll = result => {
+// Remove all games
+Game.removeAll = (result) => {
   sql.query("DELETE FROM dim_gameinfo", (err, res) => {
     if (err) {
-      console.log("error: ", err);
+      console.error("Error deleting all games: ", err);
       result(null, err);
       return;
     }
-
-    console.log(`deleted ${res.affectedRows} games`);
+    console.log(`Deleted ${res.affectedRows} games`);
     result(null, res);
   });
 };

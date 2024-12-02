@@ -1,16 +1,30 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser"); /* deprecated */
 const cors = require("cors");
+
 const app = express();
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+var corsOptions = {
+  origin: "http://localhost:8081"
+};
 
-const db = require("./app/models/db.js");
-require("./app/routes/game.routes.js")(app);
+app.use(cors(corsOptions));
 
-const PORT = process.env.PORT || 3000;
+// parse requests of content-type - application/json
+app.use(express.json()); /* bodyParser.json() is deprecated */
+
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true })); /* bodyParser.urlencoded() is deprecated */
+
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "MCO2 application." });
+});
+
+require("./app/routes/game.routes")(app);
+
+// set port, listen for requests
+const PORT = process.env.PORT || 21922;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+  console.log(`Server is running on port ${PORT}.`);
 });
