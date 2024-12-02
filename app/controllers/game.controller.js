@@ -1,4 +1,6 @@
-const Game = require("../models/game.model.js");
+const db = require("../models");
+const Game = db.games;
+const Op = db.Sequelize.Op;
 
 // Create and Save a new Game
 exports.create = (req, res) => {
@@ -103,4 +105,17 @@ exports.deleteAll = (req, res) => {
       res.send({ message: `All Games were deleted successfully!` });
     }
   });
+};
+
+exports.findAllPublished = (req, res) => {
+  Tutorial.findAll({ where: { published: true } })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials."
+      });
+    });
 };

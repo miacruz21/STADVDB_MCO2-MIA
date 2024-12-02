@@ -2,7 +2,13 @@ module.exports = {
   HOST: "ccscloud.dlsu.edu.ph",
   USER: "user",
   PASSWORD: "password",
-  DB: "dim_gameinfo",
+  DB: "MASTERNODE",
   dialect: "mysql",
-  PORT: 21922
+  PORT: 21922,
+  pool: {
+    max: 5, 
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+},
 };
