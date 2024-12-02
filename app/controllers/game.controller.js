@@ -1,6 +1,4 @@
-const db = require("../models");
-const GameInfo = db.GameInfo; // Updated to match the new model name
-const Op = db.Sequelize.Op;
+const GameInfo = require("../models/game.model.js");
 
 // Create and Save a new GameInfo
 exports.create = (req, res) => {
