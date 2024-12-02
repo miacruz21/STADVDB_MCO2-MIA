@@ -1,4 +1,5 @@
 const GameInfo = require("../models/game.model.js");
+const { Op } = require("sequelize");
 
 // Create and Save a new GameInfo
 exports.create = (req, res) => {
@@ -103,7 +104,7 @@ exports.update = (req, res) => {
     });
 };
 
-// Delete a GameInfo entry with the specified AppID in the request
+// Delete a GameInfo entry with the specified AppID
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -144,17 +145,15 @@ exports.deleteAll = (req, res) => {
     });
 };
 
-// Find all GameInfo entries with a specific condition (e.g., Positive reviews > 1000)
-exports.findAllWithCondition = (req, res) => {
-  const minPositiveReviews = req.query.minPositiveReviews || 0;
-
-  GameInfo.findAll({ where: { Positive_reviews: { [Op.gte]: minPositiveReviews } } })
+// Find all published GameInfo entries
+exports.findAllPublished = (req, res) => {
+  GameInfo.findAll({ where: { published: true } }) // Assuming 'published' is a field in your model
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving GameInfo entries.",
+        message: err.message || "Some error occurred while retrieving published GameInfo entries."
       });
     });
 };

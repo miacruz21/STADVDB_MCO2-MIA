@@ -1,5 +1,5 @@
 module.exports = {
-    HOST: "localhost",
+    HOST: "ccscloud@dlsu.edu.ph:21922",
     USER: "user",
     PASSWORD: "password",
     DB: "dim_gameinfo",
