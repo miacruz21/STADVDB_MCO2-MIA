@@ -1,18 +1,13 @@
-const GameInfo = require("../models/game.model.js");
-const { Op } = require("sequelize");
+const Game = require("../models/game.model.js");
 
-// Create and Save a new GameInfo
+// Create and Save a new Game
 exports.create = (req, res) => {
-  // Validate request
   if (!req.body.Name) {
-    res.status(400).send({
-      message: "Content can not be empty!",
-    });
-    return;
+    return res.status(400).send({ message: "Content can not be empty!" });
   }
 
-  // Create a GameInfo entry
-  const gameInfo = {
+  const game = {
+    AppID: req.body.AppID,
     Name: req.body.Name,
     Release_date: req.body.Release_date,
     Required_age: req.body.Required_age,
@@ -30,130 +25,82 @@ exports.create = (req, res) => {
     Negative_reviews: req.body.Negative_reviews,
   };
 
-  // Save GameInfo in the database
-  GameInfo.create(gameInfo)
-    .then((data) => {
+  Game.create(game, (err, data) => {
+    if (err) {
+      res.status(500).send({ message: err.message || "Some error occurred while creating the Game." });
+    } else {
       res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the GameInfo.",
-      });
-    });
+    }
+  });
 };
 
-// Retrieve all GameInfo entries from the database.
+// Retrieve all Games
 exports.findAll = (req, res) => {
-  const name = req.query.Name;
-  const condition = name ? { Name: { [Op.like]: `%${name}%` } } : null;
-
-  GameInfo.findAll({ where: condition })
-    .then((data) => {
+  Game.findAll((err, data) => {
+    if (err) {
+      res.status(500).send({ message: err.message || "Some error occurred while retrieving games." });
+    } else {
       res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving GameInfo entries.",
-      });
-    });
+    }
+  });
 };
 
-// Find a single GameInfo entry with an AppID
+// Find a single Game with an AppID
 exports.findOne = (req, res) => {
-  const id = req.params.id;
-
-  GameInfo.findByPk(id)
-    .then((data) => {
-      if (data) {
-        res.send(data);
+  Game.findById(req.params.AppID, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({ message: `Not found Game with AppID ${req.params.AppID}.` });
       } else {
-        res.status(404).send({
-          message: `Cannot find GameInfo with AppID=${id}.`,
-        });
+        res.status(500).send({ message: "Error retrieving Game with AppID " + req.params.AppID });
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error retrieving GameInfo with AppID=" + id,
-      });
-    });
-};
-
-// Update a GameInfo entry by the AppID in the request
-exports.update = (req, res) => {
-  const id = req.params.id;
-
-  GameInfo.update(req.body, {
-    where: { AppID: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "GameInfo was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update GameInfo with AppID=${id}. Maybe GameInfo was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error updating GameInfo with AppID=" + id,
-      });
-    });
-};
-
-// Delete a GameInfo entry with the specified AppID
-exports.delete = (req, res) => {
-  const id = req.params.id;
-
-  GameInfo.destroy({
-    where: { AppID: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "GameInfo was deleted successfully!",
-        });
-      } else {
-        res.send({
-          message: `Cannot delete GameInfo with AppID=${id}. Maybe GameInfo was not found!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Could not delete GameInfo with AppID=" + id,
-      });
-    });
-};
-
-// Delete all GameInfo entries from the database.
-exports.deleteAll = (req, res) => {
-  GameInfo.destroy({
-    where: {},
-    truncate: false,
-  })
-    .then((nums) => {
-      res.send({ message: `${nums} GameInfo entries were deleted successfully!` });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while removing all GameInfo entries.",
-      });
-    });
-};
-
-// Find all published GameInfo entries
-exports.findAllPublished = (req, res) => {
-  GameInfo.findAll({ where: { published: true } }) // Assuming 'published' is a field in your model
-    .then((data) => {
+    } else {
       res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving published GameInfo entries."
-      });
-    });
+    }
+  });
+};
+
+// Update a Game identified by the AppID in the request
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({ message: "Data to update can not be empty!" });
+  }
+
+  Game.updateById(req.params.AppID, req.body, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({ message: `Not found Game with AppID ${req.params.AppID}.` });
+      } else {
+        res.status(500).send({ message: "Error updating Game with AppID " + req.params.AppID });
+      }
+    } else {
+      res.send(data);
+    }
+  });
+};
+
+// Delete a Game with the specified AppID in the request
+exports.delete = (req, res) => {
+  Game.remove(req.params.AppID, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({ message: `Not found Game with AppID ${req.params.AppID}.` });
+      } else {
+        res.status(500).send({ message: "Could not delete Game with AppID " + req.params.AppID });
+      }
+    } else {
+      res.send({ message: `Game was deleted successfully!` });
+    }
+  });
+};
+
+// Delete all Games
+exports.deleteAll = (req, res) => {
+  Game.removeAll((err, data) => {
+    if (err) {
+      res.status(500).send({ message: err.message || "Some error occurred while removing all games." });
+    } else {
+      res.send({ message: `All Games were deleted successfully!` });
+    }
+  });
 };
